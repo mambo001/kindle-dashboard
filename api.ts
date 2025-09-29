@@ -24,18 +24,296 @@ function formatDateTime() {
     .replace(",", " |");
 }
 
+// Build the HTML with fixed dimensions optimized for Kindle
+const styleString = `<style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        width: 1648px;
+        height: 1246px;
+        font-family: "Roboto", sans-serif;
+        background-color: #ffffff;
+        color: #000000;
+        padding: 30px;
+        overflow: hidden;
+      }
+
+      .dashboard-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #000;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .dashboard-title {
+        font-size: 3rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+
+      .status-badge {
+        background-color: #000;
+        color: #fff;
+        padding: 8px 16px;
+        font-size: 2rem;
+        font-weight: bold;
+      }
+
+      .date-time-section {
+        text-align: right;
+        font-size: 2rem;
+        line-height: 1.5;
+      }
+
+      .last-update {
+        font-size: 2rem;
+        color: #666;
+        margin-top: 4px;
+      }
+
+      .main-grid {
+        display: flex;
+        gap: 20px;
+        flex: 1;
+        justify-content: space-between;
+        align-items: stretch;
+      }
+
+      .card {
+        background-color: #ffffff;
+        border: 2px solid #000;
+        padding: 25px;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #000;
+      }
+
+      .card-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .card-meta {
+        font-size: 2rem;
+        color: #666;
+        display: flex;
+        gap: 15px;
+      }
+
+      .chores-card {
+        flex: 1;
+      }
+
+      .task-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        flex: 1;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .task-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px dotted #ccc;
+        font-size: 3rem;
+      }
+
+      .task-item:last-child {
+        border-bottom: none;
+      }
+
+      .task-checkbox {
+        width: 2rem;
+        height: 2rem;
+        border: 2px solid #000;
+        margin-right: 12px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .task-checkbox.completed {
+        background-color: #000;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .task-text {
+        flex: 1;
+        line-height: 1.3;
+      }
+
+      .task-text.completed {
+        text-decoration: line-through;
+        color: #999;
+      }
+
+      .task-priority {
+        width: 20px;
+        height: 4px;
+        background-color: #000;
+        margin-left: 10px;
+      }
+
+      .notes-content {
+        font-size: 14px;
+        line-height: 1.6;
+        height: calc(100% - 80px);
+        overflow: hidden;
+      }
+
+      .note-line {
+        margin-bottom: 12px;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .note-line::before {
+        content: "—";
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-weight: bold;
+      }
+
+      .summary-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        height: calc(100% - 80px);
+      }
+
+      .summary-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+      }
+
+      .stat-label {
+        font-size: 14px;
+        color: #666;
+      }
+
+      .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background-color: #e0e0e0;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: auto;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background-color: #000;
+      }
+
+      .stats-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 2rem;
+        color: #666;
+      }
+
+      .weather-widget {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        border: 1px solid #000;
+        margin-top: 10px;
+      }
+
+      .weather-icon {
+        font-size: 32px;
+      }
+
+      .weather-info {
+        flex: 1;
+      }
+
+      .weather-temp {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .weather-desc {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .category-divider {
+        width: 100%;
+        height: 2px;
+        background-color: #000;
+        margin: 15px 0;
+      }
+
+      .item-count {
+        background-color: #f0f0f0;
+        padding: 2px 8px;
+        font-size: 2rem;
+        border-radius: 10px;
+      }
+
+      .device-status {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+      }
+    </style>`;
+
 // function getBatteryIcon(percentage: number): string {
 //   if (percentage < 2) return getIconSvg("44", 48); // Battery EMPTY
 //   if (percentage < 10) return getIconSvg("47", 48); // Battery LOW
 //   if (percentage > 90) return getIconSvg("46", 48); // Battery FULL
 //   return getIconSvg("45", 48); // Battery MEDIUM
 // }
-
-// {
-//   id: "1757192499675.176986246",
-//   title: "Chores",
-//   text: "[/] do something\n[ ] do something again\n[ ] do another thing\n[ ] TEST CHORE NOTE ITEM",
-// },
 
 interface Note {
   id: string;
@@ -118,7 +396,7 @@ async function createNotesImage(notes: Note[], batteryPercentage: number) {
                     </div>
                 </div>
                 <div class="task-list">
-                    ${listItem.map(renderTaskListItem).join()}
+                    ${listItem.map(renderTaskListItem).join("")}
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 20%;"></div>
@@ -145,7 +423,7 @@ async function createNotesImage(notes: Note[], batteryPercentage: number) {
                     </div>
                 </div>
                 <div class="task-list">
-                    ${listItem.map(renderTaskListItem)}
+                    ${listItem.map(renderTaskListItem).join("")}
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width: 20%;"></div>
@@ -157,286 +435,6 @@ async function createNotesImage(notes: Note[], batteryPercentage: number) {
             </div>
           `;
     };
-
-    // Build the HTML with fixed dimensions optimized for Kindle
-    const styleString = `<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            width: 1648px;
-            height: 1246px;
-            font-family: 'Roboto', sans-serif;
-            background-color: #ffffff;
-            color: #000000;
-            padding: 30px;
-            overflow: hidden;
-        }
-
-        .dashboard-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid #000;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .dashboard-title {
-            font-size: 36px;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-
-        .status-badge {
-            background-color: #000;
-            color: #fff;
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .date-time-section {
-            text-align: right;
-            font-size: 18px;
-            line-height: 1.5;
-        }
-
-        .last-update {
-            font-size: 12px;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            flex: 1;
-        }
-
-        .card {
-            background-color: #ffffff;
-            border: 2px solid #000;
-            padding: 25px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #000;
-        }
-
-        .card-title {
-            font-size: 22px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-meta {
-            font-size: 12px;
-            color: #666;
-            display: flex;
-            gap: 15px;
-        }
-
-        .chores-card {
-            grid-column: 1;
-        }
-
-        .shopping-card {
-            grid-column: 2;
-        }
-
-        .task-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px dotted #ccc;
-            font-size: 15px;
-        }
-
-        .task-item:last-child {
-            border-bottom: none;
-        }
-
-        .task-checkbox {
-            width: 16px;
-            height: 16px;
-            border: 2px solid #000;
-            margin-right: 12px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .task-checkbox.completed {
-            background-color: #000;
-            color: #fff;
-            font-size: 10px;
-            font-weight: bold;
-        }
-
-        .task-text {
-            flex: 1;
-            line-height: 1.3;
-        }
-
-        .task-text.completed {
-            text-decoration: line-through;
-            color: #999;
-        }
-
-        .task-priority {
-            width: 20px;
-            height: 4px;
-            background-color: #000;
-            margin-left: 10px;
-        }
-
-        .notes-content {
-            font-size: 14px;
-            line-height: 1.6;
-            height: calc(100% - 80px);
-            overflow: hidden;
-        }
-
-        .note-line {
-            margin-bottom: 12px;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .note-line::before {
-            content: '—';
-            position: absolute;
-            left: 0;
-            top: 0;
-            font-weight: bold;
-        }
-
-        .summary-content {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            height: calc(100% - 80px);
-        }
-
-        .summary-stat {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: auto;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background-color: #000;
-        }
-
-        .stats-row {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-size: 12px;
-            color: #666;
-        }
-
-        .weather-widget {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            border: 1px solid #000;
-            margin-top: 10px;
-        }
-
-        .weather-icon {
-            font-size: 32px;
-        }
-
-        .weather-info {
-            flex: 1;
-        }
-
-        .weather-temp {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .weather-desc {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .category-divider {
-            width: 100%;
-            height: 2px;
-            background-color: #000;
-            margin: 15px 0;
-        }
-
-        .item-count {
-            background-color: #f0f0f0;
-            padding: 2px 8px;
-            font-size: 11px;
-            border-radius: 10px;
-        }
-    </style>`;
     const htmlString = `
       <!DOCTYPE html>
       <html lang="en">
@@ -456,10 +454,15 @@ async function createNotesImage(notes: Note[], batteryPercentage: number) {
                       <h1 class="dashboard-title">Home Dashboard</h1>
                       <div class="status-badge">ACTIVE</div>
                   </div>
+                  
                   <div class="date-time-section">
                       <div id="currentDate"></div>
-                      <div id="currentTime"></div>
-                      <div class="last-update">Last update: <span id="lastUpdate">${formatDateTime()}</span></div>
+                      <div class="device-status">
+                        <div class="last-update">Last update: <span id="lastUpdate">${formatDateTime()}</span></div>
+                        <span>|</span>
+                        <div id="batteryPercentage"></div>
+                      </div>
+                      
                   </div>
               </div>
 
@@ -488,7 +491,7 @@ async function createNotesImage(notes: Note[], batteryPercentage: number) {
                   };
                   
                   document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
-                  document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+                  document.getElementById('batteryPercentage').textContent = "Battery: ${batteryPercentage}%"
                   document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('en-US', {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -540,7 +543,9 @@ export async function captureNotesScreenshot(batteryPercentage: number) {
     console.log("Screenshot captured");
 
     // Process the image with Sharp
-    const buffer = await sharp(screenshot).png().toBuffer();
+    const buffer = await sharp(screenshot)
+      .png()
+      .toBuffer();
 
     await sharp(buffer)
       .toColorspace("b-w")

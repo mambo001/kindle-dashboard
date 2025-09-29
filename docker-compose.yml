@@ -4,8 +4,7 @@ services:
     ports:
       - "10876:8080" # Single server for both dashboard and battery updates
     environment:
-      LOCATION_COORDINATES_LATITUDE: $LOCATION_COORDINATES_LATITUDE
-      LOCATION_COORDINATES_LONGITUDE: $LOCATION_COORDINATES_LONGITUDE
+      TZ: Asia/Manila
     volumes:
       - ./public:/app/public
     restart: always

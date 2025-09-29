@@ -31,7 +31,10 @@ COPY package.json bun.lockb* ./
 RUN bun install
 
 # Install Playwright browsers
-RUN bunx playwright install chromium
+# RUN bunx playwright install chromium
+RUN bunx playwright install
+RUN bunx playwright@1.48.2 install chromium
+# RUN npm install -g playwright@1.48.2
 
 # Copy the rest of the application
 COPY . .
